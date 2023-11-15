@@ -42,10 +42,6 @@ type DrawLine struct {
 
 var templates *template.Template
 
-func init() {
-	templates = template.Must(template.ParseGlob("templates/*.html"))
-}
-
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", data)
 	if err != nil {
@@ -57,6 +53,9 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	templates = template.Must(template.ParseGlob("templates/*.html"))
+
 	http.HandleFunc("/", home)
 	http.HandleFunc("/ws", wsHandler)
 
