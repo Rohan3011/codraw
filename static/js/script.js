@@ -1,4 +1,13 @@
+/**
+ * @type {WebSocket | null}
+ */
 let socket = null
+
+/**
+ *  @typedef {Object} Point
+ * @property {number} x
+ * @property {number} y
+ */
 
 /**
  * @type {HTMLCanvasElement}
@@ -17,6 +26,10 @@ const clearButton = document.getElementById('clearButton')
 
 const ctx = canvas.getContext('2d')
 let drawing = false
+
+/**
+ * @type {Point | null}
+ */
 let prevPoint = null
 
 function initSocket () {
@@ -27,7 +40,7 @@ function initSocket () {
 
     socket = new WebSocket(`ws://${window.location.host}/ws`)
 
-    socket.onopen = function () {
+    socket.onopen = () => {
       socket.send(
         JSON.stringify({
           type: 'client-ready',
@@ -37,11 +50,11 @@ function initSocket () {
       console.log('Connected successfully!')
     }
 
-    socket.onclose = function () {
+    socket.onclose = () => {
       console.log('Connection has been closed.')
     }
 
-    socket.onmessage = function (e) {
+    socket.onmessage = e => {
       const msg = JSON.parse(e.data)
 
       switch (msg.type) {
@@ -146,8 +159,16 @@ function getMousePos (canvas, e) {
   }
 }
 
+/**
+ * @typedef {Object} DrawLine
+ * @property {Point} prevPoint
+ * @property {Point} currentPoint
+ * @property {CanvasRenderingContext2D} ctx
+ * @property {string} color
+ *
+ * @param {DrawLine} drawLine
+ */
 function drawLine ({ prevPoint, currentPoint, ctx, color }) {
-  console.log(prevPoint, currentPoint, color)
   ctx.beginPath()
   ctx.moveTo(prevPoint.x, prevPoint.y)
   ctx.lineTo(currentPoint.x, currentPoint.y)
