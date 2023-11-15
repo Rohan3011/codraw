@@ -108,34 +108,29 @@ func handleWebSocketConnection(conn *websocket.Conn) {
 
 		switch msg.Type {
 		case "client-ready":
-			log.Println(msg.Type)
 			if err := conn.WriteJSON(Message{
 				Type: "get-canvas-state",
 				Data: msg.Data,
 			}); err != nil {
 				log.Println("Error during message writing:", err)
 			}
+
 		case "canvas-state":
-			log.Println(msg.Type)
 			if err := conn.WriteJSON(Message{
 				Type: "canvas-state-from-server",
 				Data: msg.Data,
 			}); err != nil {
 				log.Println("Error during message writing:", err)
 			}
-			// Handle other-type message
-		case "draw-line":
-			log.Println(msg.Type)
 
+		case "draw-line":
 			broadcast <- msg // Broadcast the message to all connected clients
+
 		case "clear":
-			log.Println(msg.Type)
 			broadcast <- msg // Broadcast the message to all connected clients
-		default:
-			log.Println(msg.Type)
-			// Handle unknown message type
 		}
 
+		log.Println(msg.Type)
 	}
 }
 
